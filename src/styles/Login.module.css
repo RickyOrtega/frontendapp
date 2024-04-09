@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.imageContainer {
+  flex: 1;
+  padding: 20px;
+}
+
+.formContainer {
+  flex: 1;
+  padding: 20px;
+}
