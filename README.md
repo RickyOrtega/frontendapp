@@ -10,22 +10,28 @@ Esta guía proporciona instrucciones detalladas sobre cómo instalar, configurar
 
 1. Clona este repositorio en tu máquina local:
 ```bash
+  git clone https://github.com/RickyOrtega/frontendapp.git
+```
+
+2. Navega al direction del proyecto:   
+```bash
   cd frontendapp
 ```
-2. Instala las dependencias del proyecto utilizando npm:
+
+3. Instala las dependencias del proyecto utilizando npm:
 ```bash
   npm install
 ```
 
 ## Ejecución
 
-3. Ejecuta la app usando:
+4. Ejecuta la app usando:
 ```bash
   npm start
 ```
 
 ## Compilación
-4. Compila a producción usando:
+5. Compila a producción usando:
 ```bash
   npm run build
 ```
