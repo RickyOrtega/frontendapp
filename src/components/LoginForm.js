@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { TextField, Button, Typography, Paper, Grid } from '@mui/material';
+import { TextField, Button, Typography, Grid } from '@mui/material';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function LoginForm() {
     <Grid container justifyContent="center" alignItems="center" style={{ height: '100vh' }}>
       <Grid item xs={10} sm={8} md={6} lg={6} xl={6}>
           <Typography variant="h5" align="center" gutterBottom>
-            Iniciar sesión
+            Iniciar Sesión
           </Typography>
           {error && <Typography color="error">{error}</Typography>}
           <form onSubmit={handleSubmit}>
