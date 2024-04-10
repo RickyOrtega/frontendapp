@@ -1,4 +1,8 @@
 const BASE_URL = 'http://localhost:8000/api/empleados/';
+let csrfToken;
+if (typeof window !== 'undefined') {
+  csrfToken = window.localStorage.getItem('csrfToken');
+}
 
 export async function crearEmpleado(empleadoData){
     const ENDPOINT = BASE_URL + 'crear-empleado/';
@@ -32,7 +36,8 @@ export async function crearEmpleado(empleadoData){
 
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
         },
         body: JSON.stringify(empleadoSeparado)
     });
@@ -41,7 +46,12 @@ export async function crearEmpleado(empleadoData){
 }
 
 export async function obtenerEmpleados(){
-    const response = await fetch(BASE_URL);
+    const response = await fetch(BASE_URL, {
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        }
+    });
     const data = await response.json();
 
     return data;
@@ -49,7 +59,12 @@ export async function obtenerEmpleados(){
 
 export async function obtenerEmpleado(id){
     const ENDPOINT = BASE_URL + id + '/';
-    const response = await fetch(ENDPOINT);
+    const response = await fetch(ENDPOINT, {
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        }
+    });
     const data = await response.json();
 
     return data;
@@ -88,7 +103,8 @@ export async function actualizarEmpleado(id, empleadoData){
 
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
         },
         body: JSON.stringify(empleadoSeparado)
     });
@@ -99,7 +115,10 @@ export async function actualizarEmpleado(id, empleadoData){
 export async function eliminarEmpleado(id){
     const ENDPOINT = BASE_URL + "eliminar-empleado/" + id;
     const response = await fetch(ENDPOINT, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
     });
     const data = await response.json();
     return data;

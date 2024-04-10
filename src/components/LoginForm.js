@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { TextField, Button, Typography, Grid } from '@mui/material';
+import { iniciarSesion } from '@/data/sesion';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -10,10 +11,18 @@ export default function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (username === 'usuario' && password === 'contraseña') {
-      router.push('/');
-    } else {
-      setError('Usuario o contraseña incorrectos');
+    try {
+      const data = await iniciarSesion(username, password);
+      if (data.key) {
+        localStorage.setItem('token', data.key);
+      } else {
+        setError('Credenciales incorrectas');
+      }
+
+      router.push('/gestion-usuarios');
+
+    } catch (error) {
+      setError('Error al iniciar sesión');
     }
   };
 
