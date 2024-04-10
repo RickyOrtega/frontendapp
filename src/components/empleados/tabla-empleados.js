@@ -22,15 +22,46 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import {
     crearEmpleado,
     obtenerEmpleados,
+    actualizarEmpleado,
+    eliminarEmpleado,
 } from "@/data/empleados";
+import dayjs from "dayjs";
 
 /* Fuente: https://mui.com/material-ui/react-table/ */
 
 export default function TablaEmpleados() {
     const [open, setOpen] = useState(false);
     const [empleados, setEmpleados] = useState([]);
+    const [empleadoEditando, setEmpleadoEditando] = useState(null);
 
-    const handleClickOpen = () => {
+    const handleClickOpen = (empleado) => {
+        if (empleado) {
+            setNuevoEmpleado({
+                ...empleado,
+                email: empleado.email[0].email,
+                telefono: empleado.telefono[0].numero,
+                indicativo: empleado.telefono[0].indicativo,
+                tipo: empleado.telefono[0].tipo,
+            });
+
+
+        } else {
+            setNuevoEmpleado({
+                nombres: '',
+                apellidos: '',
+                tipo_identificacion: '',
+                identificacion: '',
+                fecha_ingreso: null,
+                salario_mensual: '',
+                cargo: '',
+                departamento: '',
+                email: '',
+                telefono: '',
+                indicativo: '',
+                tipo: '',
+            });
+        }
+        setEmpleadoEditando(empleado);
         setOpen(true);
     };
 
@@ -74,57 +105,49 @@ export default function TablaEmpleados() {
         });
     };
 
+    const handleCrearNuevoEmpleado = () => {
+        setEmpleadoEditando(null);
+        handleClickOpen(null);
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        const response = await crearEmpleado(nuevoEmpleado);
-
-        if (response) {
-            setNuevoEmpleado({
-                nombres: '',
-                apellidos: '',
-                tipo_identificacion: '',
-                identificacion: '',
-                fecha_ingreso: null,
-                salario_mensual: '',
-                cargo: '',
-                departamento: '',
-            });
-            handleClose();
-            alert('Empleado creado correctamente');
+        if (empleadoEditando) {
+            await actualizarEmpleado(empleadoEditando.id, nuevoEmpleado);
         } else {
-            alert('Error al crear el empleado');
+            await crearEmpleado(nuevoEmpleado);
         }
+        handleClose();
+        cargarEmpleados();
     };
 
     const cargarEmpleados = () => {
         obtenerEmpleados()
-        .then(empleados => {
-            setEmpleados(empleados);
-            console.log("Empleados:", empleados);
-        })
-        .catch(error => {
-            console.error("Error al obtener los empleados:", error);
-        });
+            .then(empleados => {
+                setEmpleados(empleados);
+            })
+            .catch(error => {
+                console.error("Error al obtener los empleados:", error);
+            });
     }
 
     useEffect(() => {
         cargarEmpleados();
-    }, []);
+    }, [nuevoEmpleado]);
 
-    const onEditempleado = (id) => {
-        
-    }
+    const onDeleteempleado = async (id) => {
+        await eliminarEmpleado(id);
+        cargarEmpleados();
+    };
 
     return (
         <div style={{ margin: '1rem 0' }}>
-            <Button variant="contained" color="primary" onClick={handleClickOpen} style={{ marginBottom: '1rem' }}>
+            <Button variant="contained" color="primary" onClick={handleCrearNuevoEmpleado} style={{ marginBottom: '1rem' }}>
                 Crear nuevo empleado
             </Button>
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Id</TableCell>
                         <TableCell style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Nombres</TableCell>
                         <TableCell style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Apellidos</TableCell>
                         <TableCell style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Tipo Documento</TableCell>
@@ -152,7 +175,7 @@ export default function TablaEmpleados() {
                             <TableCell>{empleado.email[0].email}</TableCell>
                             <TableCell>{empleado.telefono[0].numero}</TableCell>
                             <TableCell>
-                                <Button variant="contained" color="primary" onClick={() => onEditempleado(empleado.id)} style={{ marginRight: '0.5rem' }}>
+                                <Button variant="contained" color="primary" onClick={() => handleClickOpen(empleado)} style={{ marginRight: '0.5rem' }}>
                                     Editar
                                 </Button>
                                 <Button variant="contained" color="secondary" onClick={() => onDeleteempleado(empleado.id)}>
@@ -249,7 +272,7 @@ export default function TablaEmpleados() {
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DatePicker
                                         label="Fecha de ingreso"
-                                        value={nuevoEmpleado.fecha_ingreso}
+                                        value={nuevoEmpleado.fecha_ingreso ? dayjs(nuevoEmpleado.fecha_ingreso) : dayjs()}
                                         inputFormat="yyyy/MM/dd"
                                         onChange={(newValue) => {
                                             setNuevoEmpleado({
@@ -289,7 +312,7 @@ export default function TablaEmpleados() {
                                 <TextField
                                     label="Teléfono"
                                     name="telefono"
-                                    value={nuevoEmpleado.numero}
+                                    value={nuevoEmpleado.telefono}
                                     fullWidth
                                     margin="normal"
                                     onChange={handleInputChange}
@@ -321,8 +344,12 @@ export default function TablaEmpleados() {
                                 </TextField>
                             </Grid>
                         </Grid>
-                        <Button type="submit" variant="contained" color="primary">
-                            Crear empleado
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                        >
+                            {empleadoEditando ? 'Actualizar empleado' : 'Crear empleado'}
                         </Button>
                     </form>
                 </DialogContent>

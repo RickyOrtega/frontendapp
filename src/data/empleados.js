@@ -28,8 +28,6 @@ export async function crearEmpleado(empleadoData){
         email: emailData
     };
 
-    console.log(empleadoSeparado);
-
     const response = await fetch(ENDPOINT, {
 
         method: 'POST',
@@ -46,8 +44,6 @@ export async function obtenerEmpleados(){
     const response = await fetch(BASE_URL);
     const data = await response.json();
 
-    console.log(data);
-
     return data;
 }
 
@@ -56,13 +52,11 @@ export async function obtenerEmpleado(id){
     const response = await fetch(ENDPOINT);
     const data = await response.json();
 
-    console.log(data);
-
     return data;
 }
 
 export async function actualizarEmpleado(id, empleadoData){
-    const ENDPOINT = BASE_URL + id + '/';
+    const ENDPOINT = BASE_URL + "editar-empleado/" + id ;
 
     // La lógica no es muy distinta a la de crearEmpleado
     const {telefono, email, indicativo, tipo, ...empleadoSinTelefonoEmail} = empleadoData;
@@ -97,6 +91,15 @@ export async function actualizarEmpleado(id, empleadoData){
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(empleadoSeparado)
+    });
+    const data = await response.json();
+    return data;
+}
+
+export async function eliminarEmpleado(id){
+    const ENDPOINT = BASE_URL + "eliminar-empleado/" + id;
+    const response = await fetch(ENDPOINT, {
+        method: 'DELETE'
     });
     const data = await response.json();
     return data;
